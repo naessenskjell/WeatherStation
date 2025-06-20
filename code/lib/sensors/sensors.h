@@ -3,6 +3,8 @@
 #include <Wire.h>
 #include <Adafruit_BME280.h>
 #include <DFRobot_AS3935_I2C.h>
+#include <functional>
+#include <time.h>
 
 // Pin definitions (can be overridden in main)
 #ifndef I2C_SDA
@@ -33,6 +35,7 @@
 #define BME280_TEMPERATURE_OFFSET 0.0f // Temperature offset in degrees Celsius
 
 extern volatile int8_t AS3935IsrTrig;
+extern volatile time_t AS3935IsrTrigTime;
 
 extern DFRobot_AS3935_I2C lightningSensor;
 extern Adafruit_BME280 bme;
@@ -42,5 +45,5 @@ void scanI2CBus(std::function<void(const char*)> logFunc);
 bool initBME280();
 bool initAS3935();
 void readBME280Data(float &temperature, float &humidity, float &pressure);
-void handleInterrupt(int interruptSource, void (*publishFunc)(const char*));
+void logInterrupt(int interruptSource, void (*publishFunc)(const char*));
 void AS3935_ISR();

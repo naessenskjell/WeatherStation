@@ -153,7 +153,7 @@ void loop() {
     delay(5);
     AS3935IsrTrig = 0; // Reset the interrupt flag
     int interruptSource = lightningSensor.getInterruptSrc();
-    handleInterrupt(interruptSource, logToMQTT); // Handle the interrupt and publish data
+    logInterrupt(interruptSource, logToMQTT); // Handle the interrupt and publish data
 
     switch (interruptSource)  // Using switch-case to handle different interrupt sources
     {

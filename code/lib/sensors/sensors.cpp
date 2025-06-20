@@ -6,9 +6,11 @@ DFRobot_AS3935_I2C lightningSensor(IRQ_PIN, I2C_ADDRESS_AS3935);
 Adafruit_BME280 bme;
 
 volatile int8_t AS3935IsrTrig = 0;
+volatile time_t AS3935IsrTrigTime = 0;
 
 void IRAM_ATTR AS3935_ISR() {
     AS3935IsrTrig = 1;
+    AS3935IsrTrigTime = time(nullptr); // Update the time when the interrupt occurs
 }
 
 bool initBME280() {
@@ -76,6 +78,12 @@ bool initAS3935() {
         lightningSensor.setSpikeRejection(AS3935_SPIKE_REJECTION);
         attachInterrupt(digitalPinToInterrupt(IRQ_PIN), AS3935_ISR, RISING);
     }
+    configTime(0, 0, "pool.ntp.org", "time.nist.gov"); // Set NTP servers for time synchronization
+    time_t now = time(nullptr);
+    while (now < 8 * 3600 * 2) {
+        delay(100); // Wait for time to be set
+        now = time(nullptr);
+    }
     return true; // Initialization successful
 }
 
@@ -93,27 +101,31 @@ void readBME280Data(float &temperature, float &humidity, float &pressure) {
     }
 }
 
-void handleInterrupt(int interruptSource, void (*publishFunc)(const char*)) {
-    const char* message;
+void logInterrupt(int interruptSource, void (*publishFunc)(const char*)) {
+    String message;
+    String interruptTime = String(ctime((const time_t*)&AS3935IsrTrigTime));
+    interruptTime.trim(); // Convert time to string and trim whitespace
+    message += interruptTime;
+    message += " - Interrupt source: ";
     switch (interruptSource) {
         case 0:
-            message = "No interrupt detected.";
+            message += "No interrupt detected.";
             break;
         case 1:
-            message = "Lightning detected!";
+            message += "Lightning detected!";
             break;
         case 2:
-            message = "Disturber detected!";
+            message += "Disturber detected!";
             break;
         case 3:
-            message = "Noise level too high!";
+            message += "Noise level too high!";
             break;
         default:
-            message = "Unknown interrupt source.";
+            message += "Unknown interrupt source.";
             break;
     }
     Serial.println(message);
     if (publishFunc) {
-        publishFunc(message);
+        publishFunc(message.c_str());
     }
 }
