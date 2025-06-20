@@ -19,7 +19,7 @@
 
 // I2C addresses
 #define I2C_ADDRESS_AS3935 0x03
-#define I2C_ADDRESS_BME280 0x77
+#define I2C_ADDRESS_BME280 0x76
 
 // AS3935 configuration
 #define AS3935_CAPACITANCE 8
