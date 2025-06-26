@@ -22,14 +22,14 @@
 #define I2C_ADDRESS_BME280 0x76
 
 // AS3935 configuration
-#define AS3935_CAPACITANCE 8
+#define AS3935_CAPACITANCE 64 // Stepping in multiples of 8 pF (8, 16, 24, ..., 120)
 #define AS3935_INDOORS 0
 #define AS3935_OUTDOORS 1
 #define AS3935_MODE AS3935_OUTDOORS
 #define AS3935_DISTURBER_DETECTION true
-#define AS3935_NOISE_LEVEL 2
-#define AS3935_WATCHDOG_THRESHOLD 1
-#define AS3935_SPIKE_REJECTION 1
+#define AS3935_NOISE_LEVEL 1 // Lowest noise level for highest sensitivity
+#define AS3935_WATCHDOG_THRESHOLD 0 // Lowest threshold for highest sensitivity
+#define AS3935_SPIKE_REJECTION 0 // Lowest rejection for highest sensitivity
 
 // BME280 configuration
 #define BME280_TEMPERATURE_OFFSET 0.0f // Temperature offset in degrees Celsius
